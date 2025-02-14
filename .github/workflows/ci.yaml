@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Quay.io Robot Account Login
+      # Quay.io Robot Account
       - name: Login to Quay.io with Robot Account
         uses: docker/login-action@v3
         with:
