@@ -22,7 +22,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: quay.io
-          username: ${{ secrets.QUAY_ROBOT_USERNAME }} # Example: michielmurphy+githubactions
+          username: ${{ secrets.QUAY_ROBOT_USERNAME }}
           password: ${{ secrets.QUAY_ROBOT_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
@@ -37,7 +37,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: |
-            quay.io/michielmurphy/alm-workshop:latest
-            quay.io/michielmurphy/alm-workshop:${{ github.sha }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
