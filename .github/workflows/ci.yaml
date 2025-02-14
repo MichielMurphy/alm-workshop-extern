@@ -1,9 +1,12 @@
 name: Golang Docker Build
 
-on: # LET THE PIPELINE TRIGGER ON A PUSH TO ALL BRANCHES
+on:
+  push:
+    branches:
+      - "**" # Trigger on push to all branches
 
 env:
-  CONTAINER_REPOSITORY: quay.io/mortierdaan # PUT YOUR OWN USERNAME HERE
+  CONTAINER_REPOSITORY: quay.io/michielmurphy # Change to your actual Quay.io username
   CONTAINER_IMAGE: alm-workshop
   GOLANG_VERSION: 1.23
 
@@ -11,21 +14,22 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # Quay.io login
-      - name: Login to Quay.io
+      # Quay.io Robot Account login
+      - name: Login to Quay.io with Robot Account
         uses: docker/login-action@v3
         with:
           registry: quay.io
-          username: <<TODO>>
-          password: <<TODO>>
+          username: ${{ secrets.QUAY_ROBOT_USERNAME }} # Example: michielmurphy+githubactions
+          password: ${{ secrets.QUAY_ROBOT_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker
         uses: docker/metadata-action@v4
         id: meta
         with:
-          images: <<TODO>>
+          images: quay.io/michielmurphy/alm-workshop
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
@@ -33,4 +37,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            quay.io/michielmurphy/alm-workshop:latest
+            quay.io/michielmurphy/alm-workshop:${{ github.sha }}
+          labels: ${{ steps.meta.outputs.labels }}
